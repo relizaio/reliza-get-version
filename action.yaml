@@ -13,7 +13,7 @@ inputs:
   reliza_api_url:
     description: "Reliza Hub API URL"
     required: false
-    default: 'http://app.relizahub.com'
+    default: 'https://app.relizahub.com'
   ci_metadata:
     description: "Metadata for CI run, (Optional - default is GitHub)"
     required: false
@@ -45,12 +45,6 @@ runs:
     - name: Get Version
       shell: bash
       run: |
-        if [ -z "${{inputs.ci_metadata}}" ]
-        then
-          meta="GitHub"
-        else
-          meta=${{inputs.ci_metadata}}
-        fi
         reliza_ver=$(reliza-cli getversion -k ${{ inputs.reliza_api_key }} -i ${{ inputs.reliza_api_id }} -u ${{ inputs.reliza_api_url }} -b ${{github.ref_name}} --metadata $meta)
         echo "completed getting ver"
         echo $reliza_ver
