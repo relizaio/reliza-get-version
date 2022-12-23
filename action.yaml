@@ -1,0 +1,71 @@
+name: 'RelizaHub get version'
+description: 'Get version for creating a new release on RelizaHub'
+branding:
+  icon: 'info'
+  color: 'green'
+inputs:
+  reliza_api_id:
+    description: "Reliza Hub API ID"
+    required: true
+  reliza_api_key:
+    description: "Reliza Hub API KEY"
+    required: true
+  reliza_api_url:
+    description: "Reliza Hub API URL"
+    required: false
+    default: 'http://app.relizahub.com'
+  ci_metadata:
+    description: "Metadata for CI run, (Optional - default is GitHub)"
+    required: false
+    default: 'GitHub'
+outputs:
+  reliza_full_version:
+    description: "Full Version"
+    value: ${{ steps.extract-version.outputs.reliza_full_version }}
+  reliza_short_version:
+    description: "Short Version"
+    value: ${{ steps.extract-version.outputs.reliza_short_version }}
+  reliza_build_start:
+    description: "Record build start time"
+    value: ${{ steps.reliza-build-start.outputs.reliza_build_start }}
+runs:
+  using: "composite"
+  steps:
+    - id: setup-reliza-cli
+      name: setup-reliza-cli
+      uses: relizaio/setup-reliza-cli@1.0
+    - id: reliza-build-start 
+      name: Record build start 
+      run: echo "reliza_build_start=$(date -Iseconds)" >> $GITHUB_OUTPUT
+      shell: bash
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 200
+    - name: Get Version
+      shell: bash
+      run: |
+        if [ -z "${{inputs.ci_metadata}}" ]
+        then
+          meta="GitHub"
+        else
+          meta=${{inputs.ci_metadata}}
+        fi
+        reliza_ver=reliza-cli getversion \
+          -k ${{ inputs.reliza_api_key }} \
+          -i ${{ inputs.reliza_api_id }} \
+          -u ${{ inputs.reliza_api_url }} \
+          -b ${{github.ref_name}} \
+          --metadata $meta
+        echo "completed getting ver"
+        echo $reliza_ver
+        echo "RLZ_VER_JSON=$reliza_ver" >> $GITHUB_ENV
+    - id: extract-version
+      name: Extract Actual Version From JSON
+      shell: bash
+      run: |
+        full_ver=$(echo $RLZ_VER_JSON | jq -r ".version")
+        # version without meta for docker registry
+        short_ver=$(echo $RLZ_VER_JSON | jq -r ".dockerTagSafeVersion")
+        echo "reliza_full_version=$full_ver" >> $GITHUB_OUTPUT
+        echo "reliza_short_version=$short_ver" >> $GITHUB_OUTPUT
