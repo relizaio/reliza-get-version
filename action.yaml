@@ -45,7 +45,7 @@ runs:
     - name: Get Version
       shell: bash
       run: |
-        reliza_ver=$(reliza-cli getversion -k ${{ inputs.reliza_api_key }} -i ${{ inputs.reliza_api_id }} -u ${{ inputs.reliza_api_url }} -b ${{github.ref_name}} --metadata $meta)
+        reliza_ver=$(reliza-cli getversion -k ${{ inputs.reliza_api_key }} -i ${{ inputs.reliza_api_id }} -u ${{ inputs.reliza_api_url }} -b ${{github.ref_name}} --metadata ${{inputs.ci_metadata}})
         echo "completed getting ver"
         echo $reliza_ver
         echo "RLZ_VER_JSON=$reliza_ver" >> $GITHUB_ENV
