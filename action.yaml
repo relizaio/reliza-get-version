@@ -32,6 +32,12 @@ outputs:
   reliza_build_start:
     description: "Record build start time"
     value: ${{ steps.reliza-build-start.outputs.reliza_build_start }}
+  reliza_do_build:
+    description: "Flag to control if build should continue"
+    value: ${{ steps.reliza-build-start.outputs.reliza_do_build }}
+  reliza_last_commit:
+    description: "Last recorded commit prior to this release"
+    value: ${{ steps.reliza-build-start.outputs.reliza_last_commit }}
 runs:
   using: "composite"
   steps:
@@ -61,6 +67,7 @@ runs:
           dobuild=true
         fi
         echo "DO_BUILD=$dobuild" >> $GITHUB_ENV
+        echo "LAST_COMMIT=$last_commit" >> $GITHUB_ENV
     - name: Get Version
       if: env.DO_BUILD == 'true'
       shell: bash
@@ -91,3 +98,4 @@ runs:
         echo "reliza_full_version=$full_ver" >> $GITHUB_OUTPUT
         echo "reliza_short_version=$short_ver" >> $GITHUB_OUTPUT
         echo "reliza_do_build=$DO_BUILD" >> $GITHUB_OUTPUT
+        echo "reliza_last_commit=$LAST_COMMIT" >> $GITHUB_OUTPUT
