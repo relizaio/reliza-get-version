@@ -63,6 +63,7 @@ runs:
         echo "DO_BUILD=$dobuild" >> $GITHUB_ENV
     - name: Get Version
       if: env.DO_BUILD == 'true'
+      shell: bash
       run: |
         cd ${{ inputs.path }}
         echo -n "-k ${{ inputs.reliza_api_key }} -i ${{ inputs.reliza_api_id }} -u ${{ inputs.reliza_api_url }} \
