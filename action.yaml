@@ -68,8 +68,9 @@ runs:
         fi
         echo "DO_BUILD=$dobuild" >> $GITHUB_ENV
         echo "LAST_COMMIT=$last_commit" >> $GITHUB_ENV
+        echo "reliza_do_build=$DO_BUILD" >> $GITHUB_OUTPUT
     - name: Get Version
-      if: env.DO_BUILD == 'true'
+      if: ${{env.DO_BUILD == 'true'}}
       shell: bash
       run: |
         cd ${{ inputs.path }}
@@ -89,6 +90,7 @@ runs:
         echo $reliza_ver
         echo "RLZ_VER_JSON=$reliza_ver" >> $GITHUB_ENV
     - id: extract-version
+      if: ${{env.DO_BUILD == 'true'}}
       name: Extract Actual Version From JSON
       shell: bash
       run: |
