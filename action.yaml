@@ -37,7 +37,7 @@ outputs:
     value: ${{ steps.extract-commits.outputs.reliza_do_build }}
   reliza_last_commit:
     description: "Last recorded commit prior to this release"
-    value: ${{ steps.extract-version.outputs.reliza_last_commit }}
+    value: ${{ steps.extract-commits.outputs.reliza_last_commit }}
 runs:
   using: "composite"
   steps:
@@ -69,7 +69,8 @@ runs:
         fi
         echo "DO_BUILD=$dobuild" >> $GITHUB_ENV
         echo "LAST_COMMIT=$last_commit" >> $GITHUB_ENV
-        echo "reliza_do_build=$DO_BUILD" >> $GITHUB_OUTPUT
+        echo "reliza_do_build=$dobuild" >> $GITHUB_OUTPUT
+        echo "reliza_last_commit=$last_commit" >> $GITHUB_OUTPUT
     - name: Get Version
       if: ${{env.DO_BUILD == 'true'}}
       shell: bash
@@ -100,4 +101,3 @@ runs:
         short_ver=$(echo $RLZ_VER_JSON | jq -r ".dockerTagSafeVersion")
         echo "reliza_full_version=$full_ver" >> $GITHUB_OUTPUT
         echo "reliza_short_version=$short_ver" >> $GITHUB_OUTPUT
-        echo "reliza_last_commit=$LAST_COMMIT" >> $GITHUB_OUTPUT
