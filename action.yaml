@@ -21,7 +21,6 @@ inputs:
   ci_metadata:
     description: "Metadata for CI run, (Optional - default is GitHub)"
     required: false
-    default: ''
 outputs:
   reliza_full_version:
     description: "Full Version"
@@ -78,11 +77,14 @@ runs:
         cd ${{ inputs.path }}
         echo -n "-k ${{ inputs.reliza_api_key }} -i ${{ inputs.reliza_api_id }} -u ${{ inputs.reliza_api_url }} \
           -b ${{github.ref_name}} \
-          --metadata "${{inputs.ci_metadata}}" \
           --commit ${{github.sha}} \
           --commitmessage \"$(git log -1 --pretty='%s')\" \
           --date $(git log -1 --date=iso-strict --pretty='%ad') \
           --vcstype git --vcsuri github.com/${{github.repository}} " >> get_version_command
+        if [ "${{inputs.ci_metadata}}" != "" ]
+        then
+          echo " --metadata ${{inputs.ci_metadata}} " >> get_version_command
+        fi
         # debug
         echo "$(cat get_version_command)"
         # get version
