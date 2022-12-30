@@ -21,6 +21,9 @@ inputs:
   ci_metadata:
     description: "Metadata for CI run, (Optional - default is GitHub)"
     required: false
+  reliza_project_id:
+    description: "Project UUID for this release if org-wide key is used"
+    required: false
 outputs:
   reliza_full_version:
     description: "Full Version"
@@ -84,6 +87,10 @@ runs:
         if [ "${{inputs.ci_metadata}}" != "" ]
         then
           echo " --metadata ${{inputs.ci_metadata}} " >> get_version_command
+        fi
+        if [ ! -z ${{inputs.reliza_project_id}} ]
+        then
+          echo -n "--project ${{inputs.reliza_project_id}} " >> reliza_command
         fi
         # debug
         echo "$(cat get_version_command)"
