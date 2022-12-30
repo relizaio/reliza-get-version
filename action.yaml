@@ -57,7 +57,16 @@ runs:
       run: |
         cd ${{ inputs.path }}
         dobuild=false
-        last_commit=$(reliza-cli getlatestrelease -i ${{ inputs.reliza_api_id }} -k ${{ inputs.reliza_api_key }} -u ${{ inputs.reliza_api_url }} -b ${{github.ref_name}} | jq -r ".sourceCodeEntryDetails.commit")
+        echo -n "-i ${{ inputs.reliza_api_id }} -k ${{ inputs.reliza_api_key }} -u ${{ inputs.reliza_api_url }} -b ${{github.ref_name}}"  > get_latest_release_cmd
+        if [ ! -z ${{inputs.reliza_project_id}} ]
+        then
+          echo " --project ${{inputs.reliza_project_id}} " >> get_latest_release_cmd
+        fi
+        
+        echo -n "reliza-cli getlatestrelease $(cat get_latest_release_cmd) " >> get_latest_release_exec
+        latest_release=$(eval "$(cat get_latest_release_exec)")
+        echo "latest_release: $latest_release"
+        last_commit=$(echo $latest_release | jq -r ".sourceCodeEntryDetails.commit")
         if [ ! -z "$last_commit" ] && [ "null" != "$last_commit" ]
         then
           echo -n "--commits $(git log $last_commit..${{github.sha}} --date=iso-strict --pretty='%H|||%ad|||%s' -- ./ | base64 -w 0) " > get_version_command
@@ -90,7 +99,7 @@ runs:
         fi
         if [ ! -z ${{inputs.reliza_project_id}} ]
         then
-          echo -n "--project ${{inputs.reliza_project_id}} " >> reliza_command
+          echo " --project ${{inputs.reliza_project_id}} " >> get_version_command
         fi
         # debug
         echo "$(cat get_version_command)"
