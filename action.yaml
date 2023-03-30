@@ -69,8 +69,8 @@ runs:
         last_commit=$(echo $latest_release | jq -r ".sourceCodeEntryDetails.commit")
         if [ ! -z "$last_commit" ] && [ "null" != "$last_commit" ]
         then
-          echo -n "--commits $(git log $last_commit..${{github.sha}} --date=iso-strict --pretty='%H|||%ad|||%s|||%an|||%ae' -- ${{ inputs.path }} | base64 -w 0) " > get_version_command
-          difflines=$(git diff $last_commit..${{github.sha}} ${{ inputs.path }} | wc -l)
+          echo -n "--commits $(git log $last_commit..${{github.sha}} --date=iso-strict --pretty='%H|||%ad|||%s|||%an|||%ae' -- ./ | base64 -w 0) " > get_version_command
+          difflines=$(git diff $last_commit..${{github.sha}} ./ | wc -l)
           if [ "$difflines" != "0" ]
           then
             dobuild=true
