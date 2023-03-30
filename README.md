@@ -9,7 +9,7 @@ Get the version info:
 
 ```yaml
 steps:
-- uses: relizaio/reliza-get-version@1.4
+- uses: relizaio/reliza-get-version@1.5
   with:
     reliza_api_id: <api-id-obtained-from-relizahub>
     reliza_api_key: <api-key-obtained-from-relizahub>
