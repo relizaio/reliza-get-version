@@ -50,7 +50,7 @@ runs:
     - name: Checkout
       uses: actions/checkout@v4
       with:
-        fetch-depth: 200
+        fetch-depth: 2000
     - name: Extract Last Release Commit And Prepare List Of Commits
       id: extract-commits
       shell: bash
