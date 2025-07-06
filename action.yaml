@@ -48,7 +48,7 @@ runs:
       run: echo "reliza_build_start=$(date -Iseconds)" >> $GITHUB_OUTPUT
       shell: bash
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       with:
         fetch-depth: 2000
     - name: Extract Last Release Commit And Prepare List Of Commits
